@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dark Fountain Settings</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; background:#111; color:#eee; margin:0; padding:20px; }
+  h2 { margin-top:0; font-size:20px; }
+  p { color:#aaa; font-size:14px; }
+  .option { display:block; padding:12px; margin-bottom:8px; border-radius:8px; background:#1c1c1c; border:1px solid #333; }
+  .option input { margin-right:10px; }
+  button { width:100%; padding:14px; font-size:16px; background:#2d8fff; color:#fff; border:none; border-radius:8px; margin-top:12px; }
+</style>
+</head>
+<body>
+  <h2>Flame Refresh Rate</h2>
+  <p>How often the background flame flickers.</p>
+  <form id="settingsForm">
+    <label class="option"><input type="radio" name="mode" value="0"> Every second</label>
+    <label class="option"><input type="radio" name="mode" value="1"> Every 2 seconds</label>
+    <label class="option"><input type="radio" name="mode" value="2"> Every 3 seconds</label>
+    <label class="option"><input type="radio" name="mode" value="3"> Burst on shake — 3 sec</label>
+    <label class="option"><input type="radio" name="mode" value="4"> Burst on shake — 5 sec</label>
+    <label class="option"><input type="radio" name="mode" value="5"> Burst on shake — 8 sec</label>
+    <label class="option"><input type="radio" name="mode" value="6"> Never (static background)</label>
+  </form>
+  <button id="saveBtn">Save Settings</button>
+  <script>
+    function getParam(name) {
+      var match = new RegExp('[?&]' + name + '=([^&]*)').exec(location.search);
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    var current = getParam('current') || '0';
+    var radios = document.getElementsByName('mode');
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].value === current) { radios[i].checked = true; }
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', function() {
+      var mode = '0';
+      for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) { mode = radios[i].value; break; }
+      }
+      document.location = 'pebble://close#' +
+        encodeURIComponent(JSON.stringify({ RefreshMode: mode }));
+    });
+  </script>
+</body>
+</html>
