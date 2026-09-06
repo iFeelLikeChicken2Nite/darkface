@@ -33,6 +33,7 @@
     }
 
     var current = getParam('current') || '0';
+    var returnTo = getParam('return_to');
     var radios = document.getElementsByName('mode');
     for (var i = 0; i < radios.length; i++) {
       if (radios[i].value === current) { radios[i].checked = true; }
@@ -43,8 +44,18 @@
       for (var i = 0; i < radios.length; i++) {
         if (radios[i].checked) { mode = radios[i].value; break; }
       }
-      document.location = 'pebble://close#' +
-        encodeURIComponent(JSON.stringify({ RefreshMode: mode }));
+      var response = encodeURIComponent(JSON.stringify({ RefreshMode: mode }));
+
+      // CloudPebble's browser-based emulator has no OS-level handler for a
+      // custom "pebble://" scheme, so it passes its own return_to URL to
+      // redirect to instead. A real phone with the Pebble app installed
+      // doesn't send return_to, and needs the pebble://close# convention
+      // so the app can intercept it.
+      if (returnTo) {
+        document.location = returnTo + '#' + response;
+      } else {
+        document.location = 'pebble://close#' + response;
+      }
     });
   </script>
 </body>
